@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Simple Chessboard</title>
+  <style>
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+    }
+    .white {
+      background-color: #f0d9b5;
+      width: 100px;
+      height: 100px;
+      display: inline-block;
+    }
+    .black {
+      background-color: #b58863;
+      width: 100px;
+      height: 100px;
+      display: inline-block;
+    }
+    .container {
+      width: 800px; 
+      height: 800px;
+      display: grid;
+      grid-template-columns: repeat(8, 100px);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container" id="chessboard"></div>
+  <script>
+    // unicode for chess pieces
+    const pieces = {
+      'r': '♜', 'n': '♞', 'b': '♝', 'q': '♛', 'k': '♚', 'p': '♟',
+      'R': '♖', 'N': '♘', 'B': '♗', 'Q': '♕', 'K': '♔', 'P': '♙'
+    };
+    //board setup
+    let board = [
+      ['r','n','b','q','k','b','n','r'],
+      ['p','p','p','p','p','p','p','p'],
+      ['','','','','','','',''],
+      ['','','','','','','',''],
+      ['','','','','','','',''],
+      ['','','','','','','',''],
+      ['P','P','P','P','P','P','P','P'],
+      ['R','N','B','Q','K','B','N','R']
+    ];
+    let selected = null;
+    function renderBoard() {
+      const boardDiv = document.getElementById('chessboard');
+      boardDiv.innerHTML = '';
+      for (let row = 0; row < 8; row++) {
+        for (let col = 0; col < 8; col++) {
+          const square = document.createElement('div');
+          square.className = (row + col) % 2 === 0 ? 'white' : 'black';
+          square.style.position = 'relative';
+          square.dataset.row = row;
+          square.dataset.col = col;
+          square.style.fontSize = '2.5em';
+          square.style.textAlign = 'center';
+          square.style.lineHeight = '100px';
+          square.style.cursor = board[row][col] ? 'pointer' : 'default';
+          if (selected && selected.row === row && selected.col === col) {
+            square.style.outline = '3px solid #ff0';
+          }
+          if (board[row][col]) {
+            square.textContent = pieces[board[row][col]];
+          }
+          square.onclick = function() {
+            handleSquareClick(row, col);
+          };
+          boardDiv.appendChild(square);
+        }
+      }
+    }
+    function handleSquareClick(row, col) {
+      if (selected) {
+        // movement logic
+        if (selected.row !== row || selected.col !== col) {
+          board[row][col] = board[selected.row][selected.col];
+          board[selected.row][selected.col] = '';
+        }
+        selected = null;
+      } else if (board[row][col]) {
+        selected = { row, col };
+      }
+      renderBoard();
+    }
+    renderBoard();
+  </script>
+</body>
+
+</html>
